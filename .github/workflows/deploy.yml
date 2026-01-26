@@ -45,8 +45,8 @@ jobs:
           with:
             aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            application_name: 'ExaminationCICDApp'
-            environment_name: 'ExaminationCICDApp-env'
+            application_name: Individuell-CICD
+            environment_name: Individuell-CICD-env
             version_label: ${{ github.run_number }}
             region: eu-north-1
             deployment_package: ./publish
