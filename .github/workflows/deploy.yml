@@ -5,49 +5,54 @@ on:
     branches:
       - main
 
-
 jobs:
-    build-and-test:
-        runs-on: ubuntu-latest
+  build-and-test:
+    runs-on: ubuntu-latest
 
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-        - name: Set up .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '8.x'
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
 
-        - name: Restore dependencies
-          run: dotnet restore Examination_CICD.sln
+    - name: Restore dependencies
+      run: dotnet restore Examination_CICD.sln
 
-        - name: Build
-          run: dotnet build Examination_CICD.sln -c Release --no-restore
+    - name: Build
+      run: dotnet build Examination_CICD.sln -c Release --no-restore
 
-        - name: Test
-          run: dotnet test Examination_CICD.sln -c Release --no-build
+    - name: Test
+      run: dotnet test Examination_CICD.sln -c Release --no-build
 
-    # Deployment job triggered only on successful build-and-test on main branch
-    deploy:
-        needs: build-and-test
-        if: github.ref == 'refs/heads/main' && success()
-        runs-on: ubuntu-latest
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && success()
+    runs-on: ubuntu-latest
 
-        steps:
-        - uses: actions/checkout@v4
+    steps:
+    - uses: actions/checkout@v4
 
-        - name: Generate Deployment Package
-          run: dotnet publish -c Release -o ./publish
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
 
-        - name: Deploy to AWS Elastic Beanstalk
-          uses: einaregilsson/beanstalk-deploy@v20
-          with:
-            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            application_name: Individuell-CICD
-            environment_name: Individuell-CICD-env
-            version_label: ${{ github.run_number }}
-            region: eu-north-1
-            deployment_package: ./publish
-            
+    - name: Generate Deployment Package
+      run: dotnet publish Examination_CICD.csproj -c Release -o ./publish
+
+    - name: Create Zip Package
+      run: cd ./publish && zip -r ../deploy.zip .
+
+    - name: Deploy to AWS Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: Individuell-CICD
+        environment_name: Individuell-CICD-env
+        version_label: ${{ github.run_number }}
+        region: eu-north-1
+        deployment_package: deploy.zip
