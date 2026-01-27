@@ -8,7 +8,7 @@ The API has two main endpoints:
 * `POST /decrypt`: Takes the encrypted text and shifts it back to the original.
 
 You can try the API here:
-[**\[http://individuell-cicd-env.eba-kzumjip5.eu-north-1.elasticbeanstalk.com/]**]
+[**\[http://individuell-cicd-env.eba-kzumjip5.eu-north-1.elasticbeanstalk.com/swagger]**]
 
 ---
 
