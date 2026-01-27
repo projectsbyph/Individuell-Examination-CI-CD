@@ -1,1 +1,0 @@
-web: dotnet Examination_CICD.dll --urls http://0.0.0.0:5000
