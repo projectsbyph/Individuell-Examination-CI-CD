@@ -20,7 +20,7 @@ app.MapPost("/encrypt", (string text) =>
 
     // Simple encryption logic (Caesar cipher with a shift of 3)
     var encryptedText = new string(text.Select(c => (char)(c+1)).ToArray());
-    return Results.Ok(new {orginal = text, result = encryptedText}); 
+    return Results.Ok(new {original = text, result = encryptedText}); 
 });
 
 // Creating endpoint two which decrypts the input text
@@ -33,7 +33,13 @@ app.MapPost("/decrypt", (string text) =>
 
     // Simple decryption logic (Caesar cipher with a shift of 3)
     var decryptedText = new string(text.Select(c => (char)(c-1)).ToArray());
-    return Results.Ok(new {orginal = text, result = decryptedText}); 
+    return Results.Ok(new {original = text, result = decryptedText}); 
 });
 
 app.Run();
+
+// Make the implicit Program class public so test projects can access it
+namespace Examination_CICD
+{
+    public partial class Program { }
+}
