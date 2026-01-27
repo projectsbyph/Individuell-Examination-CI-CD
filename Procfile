@@ -1,0 +1,1 @@
+web: dotnet Examination_CICD.dll
