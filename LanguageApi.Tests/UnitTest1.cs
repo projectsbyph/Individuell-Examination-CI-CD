@@ -1,43 +1,37 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit;
-using Examination_CICD;
+﻿using Xunit;
+using Examination_CICD; 
 
 namespace LanguageApi.Tests;
 
-public class CryptoTests : IClassFixture<WebApplicationFactory<Program>>
+public class CryptoTests
 {
-    private readonly HttpClient _client;
-
-    public CryptoTests(WebApplicationFactory<Program> factory)
+    [Fact]
+    public void Encrypt_ShouldReturnShiftedText()
     {
-        _client = factory.CreateClient();
+        // 1. Arrange (Förbered)
+        var encryptor = new TextEncryptor();
+        string input = "hello";
+        string expected = "ifmmp";
+
+        // 2. Act (Utför)
+        string result = encryptor.Encrypt(input);
+
+        // 3. Assert (Kontrollera)
+        Assert.Equal(expected, result);
     }
 
     [Fact]
-    public async Task Encrypt_ShouldReturnShiftedText()
+    public void Decrypt_ShouldReturnOriginalText()
     {
-        var response = await _client.PostAsync("/encrypt?text=hello", null);
-        response.EnsureSuccessStatusCode();
-        var content = await response.Content.ReadFromJsonAsync<CryptoResponse>();
-        Assert.Equal("ifmmp", content.result);
-    }
+        // 1. Arrange
+        var encryptor = new TextEncryptor();
+        string input = "ifmmp";
+        string expected = "hello";
 
-    [Fact]
-    public async Task Decrypt_ShouldReturnOriginalText()
-    {
-        var response = await _client.PostAsync("/decrypt?text=ifmmp", null);
-        response.EnsureSuccessStatusCode();
-        var content = await response.Content.ReadFromJsonAsync<CryptoResponse>();
-        Assert.Equal("hello", content.result);
-    }
-}
+        // 2. Act
+        string result = encryptor.Decrypt(input);
 
-public class CryptoResponse
-{
-    public string original { get; set; }
-    public string result { get; set; }
+        // 3. Assert
+        Assert.Equal(expected, result);
+    }
 }
